@@ -1,5 +1,7 @@
 (setq inhibit-startup-message t)
 
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
 (scroll-bar-mode -1)          ; Disable visible scrollbar
 (tool-bar-mode -1)            ; Disable the toolbar
 (tooltip-mode -1)             ; Disable tooltips
@@ -13,7 +15,7 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
-(set-face-attribute 'default nil :font "JetBrains Mono" :height 110)
+(set-face-attribute 'default nil :font "JetBrains Mono" :height 140)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -190,3 +192,10 @@
 	       	 (org-level-6 - 1.1)
 	       	 (org-level-7 - 1.1)
 		 (org-level-8 - 1.1)))))
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (lsp-enable-which-key-integration t))
