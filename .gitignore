@@ -1,4 +1,8 @@
+.cache/
 auto-save-list/
 elpa/
+eshell/
+server/
 /projectile-bookmarks.eld
 transient/
+/.lsp-session-v1

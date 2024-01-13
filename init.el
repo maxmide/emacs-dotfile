@@ -1,6 +1,6 @@
-(setq inhibit-startup-message t)
-
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+(setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)          ; Disable visible scrollbar
 (tool-bar-mode -1)            ; Disable the toolbar
@@ -15,7 +15,7 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
-(set-face-attribute 'default nil :font "JetBrains Mono" :height 140)
+(set-face-attribute 'default nil :font "iosevka" :height 140)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -23,6 +23,7 @@
 ;; Emacs line numbers
 (column-number-mode)
 (global-display-line-numbers-mode t)
+(setq display-line-numbers-type 'relative)
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -33,6 +34,10 @@
 
 ;; Initialize package sources
 (require 'package)
+
+;; Compile buffer to display vertically
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("melpa-stable" . "https://stable.melpa.org/packages/")
@@ -69,7 +74,8 @@
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
+  :custom ((doom-modeline-height 11)))
+
 
 (use-package doom-themes
   :init (load-theme 'doom-gruvbox t))
@@ -114,7 +120,8 @@
 
   (rune/leader-keys
    "t" '(:ignore t :which-key "toggles")
-   "tt" '(counsel-load-theme :which-key "choose theme")))
+   "tt" '(counsel-load-theme :which-key "choose theme")
+   "c" '(compile :which-key "compile")))
 
 (defun rune/evil-hook ()
   (dolist (mode '(custom-mode
@@ -192,6 +199,8 @@
 	       	 (org-level-6 - 1.1)
 	       	 (org-level-7 - 1.1)
 		 (org-level-8 - 1.1)))))
+;; Programming
+(electric-pair-mode t)
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -199,3 +208,45 @@
   (setq lsp-keymap-prefix "C-c l")
   :config
   (lsp-enable-which-key-integration t))
+
+
+;; Python
+(use-package python-mode
+  :ensure t
+  :custom
+  (python-shell-interpreter "python"))
+
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+			 (require 'lsp-pyright)
+			 (lsp))))
+
+;; Company
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+	      ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+	("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(doom python-mode which-key use-package rainbow-delimiters projectile org-bullets magit lsp-pyright ivy-rich hydra helpful general evil-collection doom-themes doom-modeline counsel company-box all-the-icons)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
